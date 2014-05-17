@@ -13,24 +13,15 @@ var header = 'Article, (Url)';
 // define url to be scraped
 var url = 'https://news.ycombinator.com';
 
-function isThereAWebsite(answer) {
-    if (answer) {
-        // console.log("website=",website);
-        writeStream.write("(NO WEBSITE)" + '\n');
-        answer = false;
-    }
-}
 
 
 // request url, then load body of page
-request(url, function(err, resp, body) {
+request(url, function (err, resp, body) {
     $ = cheerio.load(body);
 
     
     // search through each .title
     $('.title').each(function() {
-
-        var noWebsite = true;
 
         
             // pull article text from 'a'
@@ -48,19 +39,17 @@ request(url, function(err, resp, body) {
             });
 
 
-        
             // pull text from .comhead and write to csv file
-            $(this).find('.comhead').each(function() {
-                var website = $(this).text();
-                writeStream.write(website + '\n');
-                noWebsite = false;
-            });
-
-
-            console.log("noWebsite=", noWebsite);
-            isThereAWebsite(noWebsite);
+            if ($(this).find('.comhead').length) {
+                $(this).find('.comhead').each(function() {
+                    var website = $(this).text();
+                    writeStream.write(website + '\n');
+                    console.log("got here with a website");
+                });
+            };
 
     });
+    console.log("\nJOB DONE!\n")
 
 });
 
